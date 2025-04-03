@@ -6,31 +6,24 @@ export const Main = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const roomsPerPage = 6; // 한 페이지에 표시할 방 개수
+  const [rooms, setRooms] = useState(() => {
+    return JSON.parse(localStorage.getItem("rooms")) || [];
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newRoom, setNewRoom] = useState({ name: "", problems: 11, maxPlayers: 2 });
 
-  const rooms = [
-    { id: 1, name: "궯궯궯궯궯궯궯궯궯궯", players: 4, maxPlayers: 4, status: "게임중", problems: 15 },
-    { id: 2, name: "방제1", players: 1, maxPlayers: 4, status: "대기중", problems: 5 },
-    { id: 3, name: "방제2", players: 2, maxPlayers: 4, status: "대기중", problems: 10 },
-    { id: 4, name: "방제3", players: 1, maxPlayers: 4, status: "대기중", problems: 10 },
-    { id: 5, name: "방제4", players: 3, maxPlayers: 4, status: "게임중", problems: 10 },
-    { id: 6, name: "방제5", players: 4, maxPlayers: 4, status: "대기중", problems: 15 },
-    { id: 7, name: "방제6", players: 3, maxPlayers: 4, status: "게임중", problems: 10 },
-    { id: 8, name: "방제7", players: 1, maxPlayers: 4, status: "대기중", problems: 15 },
-  ];
+  useEffect(() => {
+    localStorage.setItem("rooms", JSON.stringify(rooms));
+  }, [rooms]);
 
-  // 총 페이지 수 계산
   const totalPages = Math.ceil(rooms.length / roomsPerPage);
-
-  // 현재 페이지에 표시할 방 목록
-  const displayedRooms = rooms.slice(
+  const displayedRooms = [...rooms].reverse().slice(
     (currentPage - 1) * roomsPerPage,
     currentPage * roomsPerPage
   );
 
-  // 페이지네이션 버튼 클릭 시 페이지 변경
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -41,7 +34,6 @@ export const Main = () => {
         setDropdownOpen(false);
       }
     };
-
     if (dropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -50,6 +42,19 @@ export const Main = () => {
     };
   }, [dropdownOpen]);
 
+  const handleCreateRoom = () => {
+    if (newRoom.name.trim() === "" || newRoom.name.length > 10) return;
+    const newRoomData = {
+      id: Date.now(),
+      ...newRoom,
+      players: 1, // 방을 만든 사람은 자동으로 참여
+      status: "대기중",
+    };
+    setRooms((prevRooms) => [...prevRooms, newRoomData]); // 최신 방이 위에 배치되도록 역순 정렬
+    setIsModalOpen(false);
+    navigate(`/play/${newRoomData.id}`, { state: newRoomData });
+  };
+
   return (
     <div className="main-container">
       <h1 className="main-logo">
@@ -57,13 +62,12 @@ export const Main = () => {
       </h1>
 
       <div className="button-container">
-        <button className="create-room-btn">방 만들기</button>
+        <button className="create-room-btn" onClick={() => setIsModalOpen(true)}>
+          방 만들기
+        </button>
 
         <div className="single-play-container" ref={dropdownRef}>
-          <button
-            className="single-play-btn"
-            onClick={() => setDropdownOpen((prev) => !prev)}
-          >
+          <button className="single-play-btn" onClick={() => setDropdownOpen((prev) => !prev)}>
             혼자 놀기
           </button>
 
@@ -83,7 +87,6 @@ export const Main = () => {
         </div>
       </div>
 
-      {/* 방 목록 표시 */}
       <div className="room-list">
         {displayedRooms.map((room) => (
           <div
@@ -91,7 +94,7 @@ export const Main = () => {
             className={`room-card ${room.status === "게임중" || room.players === room.maxPlayers ? "disabled" : ""}`}
             onClick={() => {
               if (room.status !== "게임중" && room.players !== room.maxPlayers) {
-                navigate(`/play/${room.id}`);
+                navigate(`/play/${room.id}`, { state: room });
               }
             }}
           >
@@ -105,7 +108,6 @@ export const Main = () => {
         ))}
       </div>
 
-      {/* 페이지네이션 버튼 */}
       <div className="pagination">
         {currentPage > 1 && (
           <button className="page-btn" onClick={() => paginate(currentPage - 1)}>
@@ -129,6 +131,32 @@ export const Main = () => {
           </button>
         )}
       </div>
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>방 만들기</h2>
+            <input
+              type="text"
+              placeholder="방 제목 (최대 10글자)"
+              maxLength="10"
+              value={newRoom.name}
+              onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+            />
+            <select onChange={(e) => setNewRoom({ ...newRoom, problems: parseInt(e.target.value) })}>
+              <option value={11}>11문제</option>
+              <option value={5}>5문제</option>
+            </select>
+            <select onChange={(e) => setNewRoom({ ...newRoom, maxPlayers: parseInt(e.target.value) })}>
+              {[2, 3, 4].map((num) => (
+                <option key={num} value={num}>{num}명</option>
+              ))}
+            </select>
+            <button onClick={handleCreateRoom}>확인</button>
+            <button onClick={() => setIsModalOpen(false)}>취소</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

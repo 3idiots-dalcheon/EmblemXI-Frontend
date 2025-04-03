@@ -15,8 +15,8 @@ function App() {
         <Layout> {/* Layout을 감싸서 모든 페이지에 배경 적용 */}
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/Play" element={<Play />} />
-            <Route path="/Result" element={<Result />} />
+            <Route path="/play" element={<Play />} />
+            <Route path="/result" element={<Result />} />
           </Routes>
         </Layout>
       </BrowserRouter>
