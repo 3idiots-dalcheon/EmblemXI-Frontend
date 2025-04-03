@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Play.css";
 
 const questions = [
-  { answer: "스티븐 제라드", image: "/images/players/stevengerrard.jpg", hint: "캡틴", logos: ["/images/logos/liverpool.svg", "/images/logos/lagalaxy.svg"] },
-  { answer: "리오넬 메시", image: "/images/players/lionelmessi.jpg", hint: "GOAT", logos: ["/images/logos/barcelona.svg", "/images/logos/psg.svg", "/images/logos/intermiami.svg"] },
-  { answer: "트렌트 알렉산더아놀드", image: "/images/players/trentalexanderarnold.jpg", hint: "66", logos: ["/images/logos/liverpool.svg"] },
-  { answer: "킬리안 음바페", image: "/images/players/kylianmbappe.jpg", hint: "닌자 거북이", logos: ["/images/logos/asmonaco.svg", "/images/logos/psg.svg", "/images/logos/realmadrid.svg"] },
+  { answer: "스티븐 제라드", image: "/images/players/stevengerrard.jpg", hint: "잉글랜드", logos: ["/images/logos/liverpool.svg", "/images/logos/lagalaxy.svg"] },
+  { answer: "리오넬 메시", image: "/images/players/lionelmessi.jpg", hint: "아르헨티나", logos: ["/images/logos/barcelona.svg", "/images/logos/psg.svg", "/images/logos/intermiami.svg"] },
+  { answer: "트렌트 알렉산더아놀드", image: "/images/players/trentalexanderarnold.jpg", hint: "잉글랜드", logos: ["/images/logos/liverpool.svg"] },
+  { answer: "킬리안 음바페", image: "/images/players/kylianmbappe.jpg", hint: "프랑스", logos: ["/images/logos/asmonaco.svg", "/images/logos/psg.svg", "/images/logos/realmadrid.svg"] },
 ];
 
 export const Play = () => {
@@ -16,6 +17,7 @@ export const Play = () => {
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
+  const navigate = useNavigate();
 
   const currentQuestion = questions[currentIndex];
 
@@ -31,16 +33,17 @@ export const Play = () => {
   }, [timeLeft, showAnswer]);
 
   // 정답 보여주기 (오버레이 팝업)
-  const handleShowAnswer = () => {
+  const handleShowAnswer = (updatedCount) => {
     setShowAnswer(true);
     setTimeout(() => {
       setShowAnswer(false);
-      nextQuestion();
+      nextQuestion(updatedCount);
     }, 3000); // 3초 후 다음 문제
   };
+  
 
   // 다음 문제로 이동
-  const nextQuestion = () => {
+  const nextQuestion = (updatedCount) => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setTimeLeft(60);
@@ -48,7 +51,7 @@ export const Play = () => {
       setShowHint(false);
       setIsCorrect(null);
     } else {
-      alert(`게임 종료! 총 ${correctCount}문제 맞춤`);
+      navigate("/result", { state: { correctCount: updatedCount } }); // 최신 정답 개수 반영
     }
   };
 
@@ -56,13 +59,17 @@ export const Play = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputValue.trim() === currentQuestion.answer) {
-      setCorrectCount(correctCount + 1);
+      setCorrectCount((prevCount) => {
+        const newCount = prevCount + 1;
+        handleShowAnswer(newCount);
+        return newCount;
+      });
       setIsCorrect(true);
-      handleShowAnswer();
     } else {
       setIsCorrect(false);
     }
   };
+  
 
   return (
     <div className="game-container">
