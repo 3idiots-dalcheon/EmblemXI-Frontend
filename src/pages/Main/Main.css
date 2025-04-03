@@ -1,0 +1,197 @@
+/* 전체 배경*/
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  } 
+
+  .header {
+    display: flex;
+    justify-content: space-between; /* 좌우 정렬 */
+    align-items: center; /* 같은 높이 유지 */
+    width: var(--room-container-width); /* 룸 카드들의 너비와 일치 */
+    margin: 0 auto; /* 가운데 정렬 */
+  }
+
+  .main-logo {
+    display: flex;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .logo-img {
+    height: 200px;/*10vh; /* 원하는 크기로 조정 */
+    /*margin-right: 10px; /* 로고와 텍스트 간격 조정 */
+  }
+  
+  /* 버튼 컨테이너 */
+  .button-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  
+  /* 버튼 스타일 */
+  .create-room-btn,
+  .single-play-btn {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .create-room-btn {
+    background-color: #edb34c;
+    color: #333;
+  }
+  
+  .single-play-btn {
+    background-color: #013f8a;
+    color: white;
+  }
+  
+  .create-room-btn:hover {
+    background-color: #ffdb4d;
+  }
+  
+  .single-play-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* 방 목록 스타일 */
+  .room-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 60%;
+  }
+  
+  /* 개별 방 카드 */
+  .room-card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    width: 180px;
+    height: 120px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  
+  .room-card:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* 다 찼거나 게임 중인 방 못 들어가게 하기 */
+  .room-card.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* 방 제목 */
+  .room-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+  /* 인원 수 (왼쪽 아래) */
+  .room-players {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1rem;
+  }
+  
+  /* 상태 (게임중 / 대기중) */
+  .room-status {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+  }
+  
+  .in-game {
+    color: red;
+  }
+  
+  .waiting {
+    color: green;
+  }
+  
+  /* 문제 수 (오른쪽 아래) */
+  .room-problems {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1rem;
+  }
+
+  .single-play-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 5px 0;
+    z-index: 10;
+    width: 100%;
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .dropdown-item:hover {
+    background: #f0f0f0;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .page-btn {
+    background-color: #ddd;
+    border: none;
+    padding: 8px 12px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .page-btn.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .page-btn:hover {
+    background-color: #bbb;
+  }
+  
+  
