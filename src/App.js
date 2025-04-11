@@ -7,6 +7,7 @@ import { Result } from "./pages/Result/Result";
 import Layout from "./components/Layout"; // Layout 가져오기
 
 const queryClient = new QueryClient();
+const isLoggedIn = !!sessionStorage.getItem("nickname"); // 로그인 확인
 
 function App() {
   return (

@@ -146,12 +146,12 @@
   display: inline-block;
 }
 
+/* 혼자 놀기 드롭다운 메뉴 */
 .dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
   background: white;
-  border: 1px solid #ddd;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 5px 0;
@@ -177,7 +177,7 @@
 }
 
 .page-btn {
-  background-color: #ddd;
+  background-color: white;
   border: none;
   padding: 8px 12px;
   margin: 0 4px;
@@ -186,12 +186,12 @@
 }
 
 .page-btn.active {
-  background-color: #007bff;
+  background-color: #013f8a;
   color: white;
 }
 
 .page-btn:hover {
-  background-color: #bbb;
+  background-color: #ffdb4d;
 }
 
 /* 팝업 배경 (모달) */
@@ -221,6 +221,7 @@ text-align: center;
 /* 입력 필드 */
 .modal-content input,
 .modal-content select {
+box-sizing: border-box;
 width: 100%;
 padding: 10px;
 margin: 10px 0;
@@ -243,15 +244,27 @@ cursor: pointer;
 }
 
 .modal-buttons .confirm-btn {
-background: #28a745;
+background: #013f8a;
 color: white;
 }
 
 .modal-buttons .cancel-btn {
-background: #dc3545;
+background: #edb34c;
 color: white;
 }
 
-.modal-buttons button:hover {
-opacity: 0.8;
+.confirm-btn:hover {
+background-color: #0056b3;
+}
+
+.cancel-btn:hover {
+background-color: #ffdb4d;
+}
+
+.create-room-btn:hover {
+  
+}
+
+.single-play-btn:hover {
+  
 }

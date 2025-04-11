@@ -6,13 +6,15 @@ export const Main = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
-  const roomsPerPage = 6; // 한 페이지에 표시할 방 개수
+  const [currentPage, setCurrentPage] = useState(1);
+  const roomsPerPage = 6;
   const [rooms, setRooms] = useState(() => {
     return JSON.parse(localStorage.getItem("rooms")) || [];
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newRoom, setNewRoom] = useState({ name: "", problems: 11, maxPlayers: 2 });
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [nickname, setNickname] = useState(() => sessionStorage.getItem("nickname") || ""); // sessionStorage로 종료시까지 유지지
 
   useEffect(() => {
     localStorage.setItem("rooms", JSON.stringify(rooms));
@@ -43,16 +45,37 @@ export const Main = () => {
   }, [dropdownOpen]);
 
   const handleCreateRoom = () => {
+    if (!nickname) {
+      setIsLoginModalOpen(true);
+      return;
+    }
     if (newRoom.name.trim() === "" || newRoom.name.length > 10) return;
     const newRoomData = {
       id: Date.now(),
       ...newRoom,
-      players: 1, // 방을 만든 사람은 자동으로 참여
+      players: 1,
       status: "대기중",
+      nickname,
     };
-    setRooms((prevRooms) => [...prevRooms, newRoomData]); // 최신 방이 위에 배치되도록 역순 정렬
+    setRooms((prevRooms) => [...prevRooms, newRoomData]);
     setIsModalOpen(false);
-    navigate(`/play/${newRoomData.id}`, { state: newRoomData });
+    navigate(`/play/${newRoomData.id}`, { state: { ...newRoomData, nickname } });
+  };
+
+  const handleRoomClick = (room) => {
+    if (room.status === "게임중" || room.players === room.maxPlayers) return;
+    if (!nickname) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    navigate(`/play/${room.id}`, { state: { ...room, nickname } });
+  };
+
+  const handleLogin = () => {
+    if (nickname.trim()) {
+      sessionStorage.setItem("nickname", nickname);
+      setIsLoginModalOpen(false);
+    }
   };
 
   return (
@@ -62,7 +85,10 @@ export const Main = () => {
       </h1>
 
       <div className="button-container">
-        <button className="create-room-btn" onClick={() => setIsModalOpen(true)}>
+        <button className="create-room-btn" onClick={() => {
+          if (!nickname) setIsLoginModalOpen(true);
+          else setIsModalOpen(true);
+        }}>
           방 만들기
         </button>
 
@@ -92,11 +118,7 @@ export const Main = () => {
           <div
             key={room.id}
             className={`room-card ${room.status === "게임중" || room.players === room.maxPlayers ? "disabled" : ""}`}
-            onClick={() => {
-              if (room.status !== "게임중" && room.players !== room.maxPlayers) {
-                navigate(`/play/${room.id}`, { state: room });
-              }
-            }}
+            onClick={() => handleRoomClick(room)}
           >
             <h2 className="room-title">{room.name}</h2>
             <p className="room-players">{room.players}/{room.maxPlayers}</p>
@@ -152,8 +174,30 @@ export const Main = () => {
                 <option key={num} value={num}>{num}명</option>
               ))}
             </select>
-            <button onClick={handleCreateRoom}>확인</button>
-            <button onClick={() => setIsModalOpen(false)}>취소</button>
+            <div className="modal-buttons">
+              <button className="confirm-btn" onClick={handleCreateRoom}>확인</button>
+              <button className="cancel-btn" onClick={() => setIsModalOpen(false)}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isLoginModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>로그인</h2>
+            <input
+              type="text"
+              placeholder="닉네임을 입력하세요"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+            />
+            {/* <input type="password" placeholder="비밀번호" /> */}
+            {/* <button className="signup-btn">회원가입</button> */}
+            <div className="modal-buttons">
+              <button className="confirm-btn" onClick={handleLogin}>확인</button>
+              <button className="cancel-btn" onClick={() => setIsLoginModalOpen(false)}>취소</button>
+            </div>
           </div>
         </div>
       )}

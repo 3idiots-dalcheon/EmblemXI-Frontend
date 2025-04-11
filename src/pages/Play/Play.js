@@ -18,6 +18,7 @@ export const Play = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
   const navigate = useNavigate();
+  const nickname = sessionStorage.getItem("nickname"); // 세션에 저장 된 닉네임 가져 옴
 
   const currentQuestion = questions[currentIndex];
 
@@ -107,7 +108,7 @@ export const Play = () => {
         />
         <button type="submit">제출</button>
       </form>
-      <div className="correct-count">정답 {correctCount}</div>
+      <div className="correct-count">{nickname} 정답 {correctCount}</div>
     </div>
   );
 };
